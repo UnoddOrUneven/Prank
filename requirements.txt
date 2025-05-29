@@ -1,0 +1,7 @@
+PyQt5
+Pillow
+colorama
+win32security
+tqdm
+pyautogui
+pygame

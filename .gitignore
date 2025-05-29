@@ -1,0 +1,12 @@
+.venv
+.idea/
+*.iml
+*.ipr
+*.iws
+inspectionProfiles/
+workspace.xml
+vcs.xml
+tasks.xml
+*.tmPreferences
+build/
+dist/
