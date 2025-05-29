@@ -333,8 +333,7 @@ def shutdown_pc():
     system = platform.system()
 
     if system == "Windows":
-        pass
-        #os.system("shutdown -s -t 1")
+        os.system("shutdown -s -t 1")
 
 
 if __name__ == '__main__':
