@@ -3,6 +3,11 @@
 **A harmless joke program to slightly scare your friends.**  
 *(Probably safe for PC — use at your own risk!)*  
 
+## Quick Start  
+
+#### Download Ready EXE  
+👉 [Download pre-built .exe](https://github.com/UnoddOrUneven/ScaryPrank/releases/latest)  
+
 ---
 
 ### Features  
@@ -14,13 +19,10 @@
 
 ---
 
-### ⚠️ Warning  
-- Not responsible for any bricks, heart attacks or friendships lost  
 
----
 
-### Quick Start  
 
-#### Download Ready EXE  
-👉 [Download pre-built .exe](https://github.com/UnoddOrUneven/ScaryPrank/releases/latest)  
-
+### 🎮 Pro Tip  
+For maximum effect:  
+- Set as startup program
+ 
