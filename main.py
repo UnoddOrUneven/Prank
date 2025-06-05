@@ -14,6 +14,9 @@ import win32api
 import win32process
 import win32security
 import winsound
+import signal
+import setproctitle
+setproctitle.setproctitle("System32")
 
 
 
