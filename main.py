@@ -83,8 +83,7 @@ class ProcessManager:
         current_process = win32api.GetCurrentProcess()
         win32process.SetPriorityClass(current_process, win32process.HIGH_PRIORITY_CLASS)
 
-        token = win32security.OpenProcessToken(current_process, win32security.TOKEN_ALL_ACCESS)
-        token_info = win32security.GetTokenInformation(token, win32security.TokenUser)
+
 
         try:
             WindowsAPI.kernel32.SetConsoleTitleW("System Service Host")
